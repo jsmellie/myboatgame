@@ -66,35 +66,20 @@ public class ShipController : MonoBehaviour
   /// <summary>
   /// Called every frame to update the ship.
   /// </summary>
-  void Update()
+  protected virtual void Update()
   {
     //Make sure everything is set up nicely
     if (_maxSpeed != float.NaN)
     {
       //Calc new current speed
-      if(_currentSpeed != _maxSpeed)
-      {
-        if(_currentSpeed > _maxSpeed)
-        {
-          _currentSpeed -= _movementAcceleration;
-        }
-        else
-        {
-          _currentSpeed += _movementAcceleration;
-        }
-
-        if(_currentSpeed > _maxSpeed - _movementAcceleration && _currentSpeed < _maxSpeed + _movementAcceleration)
-        {
-          _currentSpeed = _maxSpeed;
-        }
-      }
+      CalcCurrentSpeed();
 
       //Calc the direction we are moving
       Vector2 direction = _xform.rotation * Vector2.up;
 
       Vector3 position = _xform.position;
 
-      position += (Vector3)direction * (_currentSpeed * Time.deltaTime);
+      position += (Vector3)direction * _currentSpeed * Time.deltaTime;
 
       _xform.position = position;
     }
@@ -102,6 +87,30 @@ public class ShipController : MonoBehaviour
   #endregion
 
   #region Speed Modifiers
+
+  /// <summary>
+  /// Calculates the current speed
+  /// </summary>
+  protected virtual void CalcCurrentSpeed()
+  {
+    if (_currentSpeed != _maxSpeed)
+    {
+      if (_currentSpeed > _maxSpeed)
+      {
+        _currentSpeed -= _movementAcceleration;
+      }
+      else
+      {
+        _currentSpeed += _movementAcceleration;
+      }
+
+      if (_currentSpeed > _maxSpeed - _movementAcceleration && _currentSpeed < _maxSpeed + _movementAcceleration)
+      {
+        _currentSpeed = _maxSpeed;
+      }
+    }
+  }
+
   [ContextMenu("Calc Max Speed")]
   protected virtual void CalcMaxSpeed()
   {
