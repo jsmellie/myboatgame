@@ -1,8 +1,29 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Canon : MonoBehaviour {
+public class Canon : MonoBehaviour
+{
+  #region Enums
+  public enum DirectionType
+  {
+    Right = 0,
+    Left,
+    Forward,
+    Backward,
+    Follow
+  }
+  #endregion
 
+  #region Fields & Properties
+
+  [SerializeField]
+  protected DirectionType _direction = DirectionType.Right;
+  public DirectionType direction
+  {
+    get { return _direction; }
+  }
+
+  #endregion
   protected virtual void Awake()
   {
     CanonController controller;
@@ -22,5 +43,10 @@ public class Canon : MonoBehaviour {
     }
 
     controller.AddCanon(this);
+  }
+
+  public bool Fire()
+  {
+    return true;
   }
 }

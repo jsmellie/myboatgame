@@ -19,17 +19,37 @@ public class CanonController : MonoBehaviour
       _canonList.Add(canon);
     }
   }
+
+  public void RemoveCanon(Canon canon)
+  {
+    _canonList.Remove(canon);
+  }
   #endregion
 
   #region Input
   public void FireLeftSide()
   {
-    //TODO: Go through the list of canons and fire all the left side ones
+    FireSide(Canon.DirectionType.Left);
   }
 
   public void FireRightSide()
   {
-    //TODO: Go through the list of canons and fire all the left side ones
+    FireSide(Canon.DirectionType.Right);
+  }
+
+  public void FireSide(Canon.DirectionType direction)
+  {
+    Canon curCanon = null;
+
+    for (int i = 0; i < _canonList.Count; ++i)
+    {
+      curCanon = _canonList[i];
+
+      if (curCanon.direction == Canon.DirectionType.Right)
+      {
+        curCanon.Fire();
+      }
+    }
   }
   #endregion
   #endregion
