@@ -25,6 +25,10 @@ public class ShipController : MonoBehaviour
   protected float _currentSpeed = 0;
 
   protected Transform _xform;
+  protected BoxCollider2D _boxCollider;
+
+  protected Vector2 _camMin;
+  protected Vector2 _camMax;
   #endregion
   #region Functions
   #region Unity Functions
@@ -35,7 +39,20 @@ public class ShipController : MonoBehaviour
   {
     //Save a ref to the xform to make it easier to use later
     _xform = this.GetComponent<Transform>();
+    _boxCollider = this.GetComponent<BoxCollider2D>();
+    Camera mainCam = Camera.main;
 
+    if (mainCam != null)
+    {
+      Vector2 halfCamSize;
+      halfCamSize.y = mainCam.orthographicSize;
+      halfCamSize.x = halfCamSize.y * mainCam.aspect;
+
+      Vector2 camPos = (Vector2)mainCam.transform.position;
+
+      _camMin = camPos - halfCamSize;
+      _camMax = camPos + halfCamSize;
+    }
 
     //If the user hasn't set any speed increments, yell at them and set the defaults
     if (_speedIncrements.Length == 0)
@@ -83,10 +100,58 @@ public class ShipController : MonoBehaviour
 
       _xform.position = position;
     }
+
+    if (_boxCollider != null)
+    {
+      float halfShipSize = _boxCollider.size.x > _boxCollider.size.y ? _boxCollider.size.x/2 : _boxCollider.size.y/2;
+
+      Vector3 position = _xform.position;
+
+      //Make sure the ship is within the camera bounds
+      if (position.x < _camMin.x - halfShipSize)
+      {
+        position.x = _camMax.x + halfShipSize;
+      }
+      else if (position.x > _camMax.x + halfShipSize)
+      {
+        position.x = _camMin.x - halfShipSize;
+      }
+
+      if (position.y < _camMin.y - halfShipSize)
+      {
+        position.y = _camMax.y + halfShipSize;
+      }
+      else if (position.y > _camMax.y + halfShipSize)
+      {
+        position.y = _camMin.y - halfShipSize;
+      }
+
+      _xform.position = position;
+    }
   }
   #endregion
 
   #region Speed Modifiers
+
+  /// <summary>
+  /// Increment the speed index.  If it's already the highest, won't do anything
+  /// </summary>
+  public virtual void SpeedUp()
+  {
+    _speedIndex += 1;
+
+    CalcMaxSpeed();
+  }
+
+  /// <summary>
+  /// Decreases the speed index.  If it's already the lowest, won't do anything
+  /// </summary>
+  public virtual void SlowDown()
+  {
+    _speedIndex -= 1;
+
+    CalcMaxSpeed();
+  }
 
   /// <summary>
   /// Calculates the current speed
@@ -127,7 +192,7 @@ public class ShipController : MonoBehaviour
   }
   #endregion
 
-  #region Input Callbacks
+  #region Direction Modifiers
 
   /// <summary>
   /// Rotates the ship based on the value passed
@@ -144,26 +209,6 @@ public class ShipController : MonoBehaviour
 
       _xform.Rotate(0, 0, rotAmount);
     }
-  }
-
-  /// <summary>
-  /// Increment the speed index.  If it's already the highest, won't do anything
-  /// </summary>
-  public virtual void SpeedUp()
-  {
-    _speedIndex += 1;
-
-    CalcMaxSpeed();
-  }
-
-  /// <summary>
-  /// Decreases the speed index.  If it's already the lowest, won't do anything
-  /// </summary>
-  public virtual void SlowDown()
-  {
-    _speedIndex -= 1;
-
-    CalcMaxSpeed();
   }
 
   #endregion
