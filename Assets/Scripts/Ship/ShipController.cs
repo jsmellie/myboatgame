@@ -22,10 +22,10 @@ public class ShipController : MonoBehaviour
   protected int _speedIndex = -1;
 
   protected float _maxSpeed = float.NaN;
-  protected float _currentSpeed = 0;
+  protected float _cachedSpeed = float.NaN;
 
   protected Transform _xform;
-  protected BoxCollider2D _boxCollider;
+  protected Rigidbody2D _body;
 
   protected Vector2 _camMin;
   protected Vector2 _camMax;
@@ -39,7 +39,8 @@ public class ShipController : MonoBehaviour
   {
     //Save a ref to the xform to make it easier to use later
     _xform = this.GetComponent<Transform>();
-    _boxCollider = this.GetComponent<BoxCollider2D>();
+    _body = this.GetComponent<Rigidbody2D>();
+
     Camera mainCam = Camera.main;
 
     if (mainCam != null)
@@ -89,44 +90,12 @@ public class ShipController : MonoBehaviour
     if (_maxSpeed != float.NaN)
     {
       //Calc new current speed
-      CalcCurrentSpeed();
+      float currentSpeed = CalcCurrentSpeed();
 
       //Calc the direction we are moving
       Vector2 direction = _xform.rotation * Vector2.up;
 
-      Vector3 position = _xform.position;
-
-      position += (Vector3)direction * _currentSpeed * Time.deltaTime;
-
-      _xform.position = position;
-    }
-
-    if (_boxCollider != null)
-    {
-      float halfShipSize = _boxCollider.size.x > _boxCollider.size.y ? _boxCollider.size.x/2 : _boxCollider.size.y/2;
-
-      Vector3 position = _xform.position;
-
-      //Make sure the ship is within the camera bounds
-      if (position.x < _camMin.x - halfShipSize)
-      {
-        position.x = _camMax.x + halfShipSize;
-      }
-      else if (position.x > _camMax.x + halfShipSize)
-      {
-        position.x = _camMin.x - halfShipSize;
-      }
-
-      if (position.y < _camMin.y - halfShipSize)
-      {
-        position.y = _camMax.y + halfShipSize;
-      }
-      else if (position.y > _camMax.y + halfShipSize)
-      {
-        position.y = _camMin.y - halfShipSize;
-      }
-
-      _xform.position = position;
+      _body.velocity = direction * currentSpeed;
     }
   }
   #endregion
@@ -156,24 +125,29 @@ public class ShipController : MonoBehaviour
   /// <summary>
   /// Calculates the current speed
   /// </summary>
-  protected virtual void CalcCurrentSpeed()
+  protected virtual float CalcCurrentSpeed()
   {
-    if (_currentSpeed != _maxSpeed)
+    float currentSpeed = _body.velocity.magnitude;
+
+    if (currentSpeed != _maxSpeed)
     {
-      if (_currentSpeed > _maxSpeed)
+      if (currentSpeed > _maxSpeed)
       {
-        _currentSpeed -= _movementAcceleration;
+        currentSpeed -= _movementAcceleration;
       }
       else
       {
-        _currentSpeed += _movementAcceleration;
+        currentSpeed += _movementAcceleration;
       }
 
-      if (_currentSpeed > _maxSpeed - _movementAcceleration && _currentSpeed < _maxSpeed + _movementAcceleration)
+      if (currentSpeed > _maxSpeed - _movementAcceleration && currentSpeed < _maxSpeed + _movementAcceleration)
       {
-        _currentSpeed = _maxSpeed;
+        currentSpeed = _maxSpeed;
       }
     }
+
+    _cachedSpeed = currentSpeed;
+    return currentSpeed;
   }
 
   [ContextMenu("Calc Max Speed")]
@@ -200,8 +174,13 @@ public class ShipController : MonoBehaviour
   /// <param name="intensity">The intensity to rotate, -1 being negative rotation and 1 being positive.  Clamped between -1 and 1.</param>
   public void Rotate(float intensity)
   {
-    if (_currentSpeed > 0)
+    if (_cachedSpeed > 0)
     {
+      if (_body != null)
+      {
+        _body.angularVelocity = 0;
+      }
+
       //Make sure that intensity is never over 1
       intensity = Mathf.Clamp(intensity, -1, 1);
 
