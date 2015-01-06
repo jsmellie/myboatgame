@@ -6,11 +6,8 @@ public abstract class DamageableObject : MonoBehaviour
   [SerializeField]
   protected float _maxHealth;
 
-  [SerializeField]
-  protected float _maxArmour;
-
   protected float _health;
-  public float health
+  public virtual float health
   {
     get
     {
@@ -18,44 +15,30 @@ public abstract class DamageableObject : MonoBehaviour
     }
   }
 
+  [SerializeField]
   protected float _armour;
-  public float armour
+  public virtual float armour
   {
     get
     {
       return _armour;
     }
-    set
-    {
-      if (value > _maxArmour)
-      {
-        _armour = _maxArmour;
-      }
-      else if (value < 0.0f)
-      {
-        _armour = 0.0f;
-      }
-      else
-      {
-        _armour = value;
-      }
-    }
   }
 
-  public void DamageTaken(float damage)
+  public virtual void DamageTaken(float damage)
   {
-    damage = damage * (1 - _armour);
+    damage = damage - armour;
 
-    if (damage < 0)
+    if (damage <= 0)
     {
       return;
     }
 
     _health -= damage;
 
-    if (_health < 0)
+    if (_health <= 0)
     {
-      //TODO: Dead
+      Dead();
     }
   }
 

@@ -9,8 +9,8 @@ public class CanonBall : MonoBehaviour
   const float MAX_LIFESPAN = 5.0f;
 
   protected float _size = float.NaN;
-
   protected float _firedTime = float.NaN;
+  protected float _chargeModifier = float.NaN;
 
   [SerializeField]
   protected float _baseDamage = 5.0f;
@@ -18,7 +18,7 @@ public class CanonBall : MonoBehaviour
   {
     get
     {
-      return _baseDamage * _size;
+      return _baseDamage * _size * (1 + _chargeModifier);
     }
   }
 
@@ -53,8 +53,6 @@ public class CanonBall : MonoBehaviour
   protected virtual void Awake()
   {
     _animator = GetComponent<Animator>();
-
-    Fired();
   }
 
   protected virtual void Update()
@@ -65,13 +63,14 @@ public class CanonBall : MonoBehaviour
     }
   }
 
-  public virtual void Fired()
+  public virtual void Fired(float chargeModifier)
   {
     if (_animator != null)
     {
       _animator.SetTrigger(FIRE_TRIGGER);
     }
 
+    _chargeModifier = chargeModifier;
     _firedTime = Time.time;
   }
 
@@ -88,15 +87,16 @@ public class CanonBall : MonoBehaviour
     }
 
     _friendlyTag = null;
+    _firedTime = float.NaN;
+    _chargeModifier = float.NaN;
   }
 
   void OnTriggerEnter2D(Collider2D collidingObj)
   {
-    if (collidingObj.tag != _friendlyTag)
+    if (collidingObj.tag != _friendlyTag && collidingObj.tag != "MainCamera")
     {
-      
+      Debug.Log("Canon Ball collided with " + collidingObj.name);
     }
-    //TODO: Make what ever it hit take dmg
   }
 
   public void Splashed()

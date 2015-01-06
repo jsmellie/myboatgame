@@ -41,7 +41,15 @@ public class Canon : MonoBehaviour
     }
   }
 
-  protected float _curPower = 0;
+  [SerializeField]
+  protected float _chargePower = 2;
+  public float chargePower
+  {
+    get
+    {
+      return _chargePower;
+    }
+  }
 
   protected float _curChargeTime = 0;
 
@@ -175,14 +183,12 @@ public class Canon : MonoBehaviour
 
       Rigidbody2D newBallBody = newBall.GetComponent<Rigidbody2D>();
 
-      float curPow = _curPower;
-      if (curPow == 0)
-      {
-        curPow = _basePower;
-      }
+      float chargePercent = _curChargeTime / chargeTime;
 
-      newBallBody.velocity = (direction * curPow) + _shipController.curVelocity;
-      newBall.Fired();
+      float curPow = _basePower * (1 + (chargePercent * _chargePower));
+
+      newBallBody.velocity = (direction * curPow);// +_shipController.curVelocity;
+      newBall.Fired(chargePercent);
 
       return true;
     }
@@ -211,14 +217,12 @@ public class Canon : MonoBehaviour
 
       Rigidbody2D newBallBody = newBall.GetComponent<Rigidbody2D>();
 
-      float curPow = _curPower;
-      if (curPow == 0)
-      {
-        curPow = _basePower;
-      }
+      float chargePercent = _curChargeTime / chargeTime;
 
-      newBallBody.velocity = (direction * curPow) + _shipController.curVelocity;
-      newBall.Fired();
+      float curPow = _basePower * (1 + (chargePercent * _chargePower));
+
+      newBallBody.velocity = (direction * curPow);// +_shipController.curVelocity;
+      newBall.Fired(chargePercent);
 
       return true;
     }

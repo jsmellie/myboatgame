@@ -94,10 +94,17 @@ public class ShipController : MonoBehaviour, IShipPart
       _speedIncrements = DEFAULT_INCREMENTS;
     }
 
+    float startingSpeed = 1.0f;
+
+    if (Debug.isDebugBuild)
+    {
+      startingSpeed = 0.0f;
+    }
+
     //If one of the speed increments is 1.0f, then use it as the default
     for (int i = 0; i < _speedIncrements.Length; ++i)
     {
-      if (_speedIncrements[i] == 1.0f)
+      if (_speedIncrements[i] == startingSpeed)
       {
         _speedIndex = i;
         break;
