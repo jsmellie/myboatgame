@@ -6,6 +6,9 @@ public class CameraEdgeDetector : MonoBehaviour
   Vector2 _camMin;
   Vector2 _camMax;
 
+  [SerializeField]
+  bool showLogs = true;
+
   void Awake()
   {
     Camera cam = this.GetComponent<Camera>();
@@ -20,6 +23,8 @@ public class CameraEdgeDetector : MonoBehaviour
 
       _camMin = camPos - halfCamSize;
       _camMax = camPos + halfCamSize;
+
+      Log("Cam Min Pos: " + _camMin + " | Cam Max Pos: " + _camMax);
     }
   }
 
@@ -30,29 +35,36 @@ public class CameraEdgeDetector : MonoBehaviour
     //This is a ship!  If it's going offscreen we want to move it to the other side
     if (shipController != null)
     {
+      //this.Log("Ship going off screen: " + shipController.name);
+
       Bounds colliderBounds = collider.bounds;
 
-      float halfShipSize = colliderBounds.size.x > colliderBounds.size.y ? colliderBounds.size.x / 2 : colliderBounds.size.y / 2;
+      this.Log("Ship bounds: " + colliderBounds + " | bounds size: " + colliderBounds.size);
+
+      float halfShipSizeX = colliderBounds.size.x / 2;
+      float halfShipSizeY = colliderBounds.size.y / 2;
 
       Vector3 position = collider.GetComponent<Transform>().position;
 
+      //this.Log("Ship position: " + position);
+
       //Make sure the ship is within the camera bounds
-      if (position.x < _camMin.x - halfShipSize)
+      if (position.x < _camMin.x)
       {
-        position.x = _camMax.x + halfShipSize;
+        position.x = _camMax.x + halfShipSizeX;
       }
-      else if (position.x > _camMax.x + halfShipSize)
+      else if (position.x > _camMax.x)
       {
-        position.x = _camMin.x - halfShipSize;
+        position.x = _camMin.x - halfShipSizeX;
       }
 
-      if (position.y < _camMin.y - halfShipSize)
+      if (position.y < _camMin.y)
       {
-        position.y = _camMax.y + halfShipSize;
+        position.y = _camMax.y + halfShipSizeY;
       }
-      else if (position.y > _camMax.y + halfShipSize)
+      else if (position.y > _camMax.y)
       {
-        position.y = _camMin.y - halfShipSize;
+        position.y = _camMin.y - halfShipSizeY;
       }
 
       collider.GetComponent<Transform>().position = position;
@@ -66,6 +78,16 @@ public class CameraEdgeDetector : MonoBehaviour
     if (canonBall != null)
     {
       Destroy(collider.gameObject);
+
+      return;
+    }
+  }
+
+  protected void Log(string message)
+  {
+    if (showLogs)
+    {
+      Debug.Log(message);
     }
   }
 }

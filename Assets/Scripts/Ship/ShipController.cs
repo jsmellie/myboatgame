@@ -1,13 +1,19 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class ShipController : MonoBehaviour
+public class ShipController : MonoBehaviour, IShipPart
 {
   #region Constants
   protected float[] DEFAULT_INCREMENTS = { 0.5f, 1.0f, 1.5f };
   #endregion
 
   #region Fields & Properties
+
+  protected Ship _ship;
+  public Ship ship
+  {
+    get { return _ship; }
+  }
 
   [SerializeField, Range(0.0001f, 1.0f)]
   protected float _movementAcceleration = 0.1f;
@@ -29,8 +35,15 @@ public class ShipController : MonoBehaviour
 
   protected Vector2 _camMin;
   protected Vector2 _camMax;
+
+  public Vector2 curVelocity
+  {
+    get { return _body.velocity; }
+  }
   #endregion
+
   #region Functions
+
   #region Unity Functions
   /// <summary>
   /// Called once 
@@ -40,6 +53,25 @@ public class ShipController : MonoBehaviour
     //Save a ref to the xform to make it easier to use later
     _xform = this.GetComponent<Transform>();
     _body = this.GetComponent<Rigidbody2D>();
+
+    //Add this to the ships list of parts
+    Transform curXform = _xform;
+
+    while (curXform != null && _ship == null)
+    {
+      _ship = curXform.GetComponent<Ship>();
+
+      curXform = curXform.parent;
+    }
+
+    if (_ship == null)
+    {
+      throw new System.NotSupportedException("A " + this.GetType().Name + " must have a Ship on it or somewhere up it's hierarchy.");
+    }
+    else
+    {
+      _ship.AddShipPart(this);
+    }
 
     Camera mainCam = Camera.main;
 
@@ -186,7 +218,8 @@ public class ShipController : MonoBehaviour
 
       float rotAmount = _rotationAcceleration * intensity;
 
-      _xform.Rotate(0, 0, rotAmount);
+      _body.MoveRotation(_xform.rotation.eulerAngles.z + rotAmount);
+      //_xform.Rotate(0, 0, rotAmount);
     }
   }
 

@@ -6,7 +6,10 @@ public class InputManager : MonoBehaviour
   #region Fields & Properties
 
   ShipController _player1Controller = null;
+  CanonController _player1CanonController = null;
+
   ShipController _player2Controller = null;
+  CanonController _player2CanonController = null;
 
   Collider2D _lastSlotCollider = null;
 
@@ -25,6 +28,7 @@ public class InputManager : MonoBehaviour
     if (player1 != null && player1.GetComponent<ShipController>() != null)
     {
       _player1Controller = player1.GetComponent<ShipController>();
+      _player1CanonController = player1.GetComponentInChildren<CanonController>();
     }
     else
     {
@@ -36,6 +40,7 @@ public class InputManager : MonoBehaviour
     if (player2 != null && player2.GetComponent<ShipController>() != null)
     {
       _player2Controller = player2.GetComponent<ShipController>();
+      _player2CanonController = player2.GetComponentInChildren<CanonController>();
     }
   }
 
@@ -82,6 +87,32 @@ public class InputManager : MonoBehaviour
       else if (Input.GetKeyDown(KeyCode.K))
       {
         _player2Controller.SlowDown();
+      }
+    }
+
+    //If we have a player 1 canon controller, check input for it
+    if (_player1CanonController != null)
+    {
+      if (Input.GetKeyDown(KeyCode.C))
+      {
+        _player1CanonController.FireLeftSide();
+      }
+      if (Input.GetKeyDown(KeyCode.V))
+      {
+        _player1CanonController.FireRightSide();
+      }
+    }
+
+    //If we have a player 2 canon controller, check input for it
+    if (_player2CanonController != null)
+    {
+      if (Input.GetKeyDown(KeyCode.Period))
+      {
+        _player2CanonController.FireLeftSide();
+      }
+      if (Input.GetKeyDown(KeyCode.Backslash))
+      {
+        _player2CanonController.FireRightSide();
       }
     }
     /*
