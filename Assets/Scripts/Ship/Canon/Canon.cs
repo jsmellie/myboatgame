@@ -15,6 +15,7 @@ public class Canon : MonoBehaviour
   #region Fields & Properties
 
   ShipController _shipController;
+  protected string _friendlyTag = "";
 
   [SerializeField]
   protected Transform _leftFiringPoint;
@@ -129,6 +130,8 @@ public class Canon : MonoBehaviour
 
     controller.AddCanon(this);
 
+    _friendlyTag = controller.ship.tag;
+
     _shipController = controller.ship.shipController;
 
     //Set the size of the canon ball
@@ -185,10 +188,10 @@ public class Canon : MonoBehaviour
 
       float chargePercent = _curChargeTime / chargeTime;
 
-      float curPow = _basePower * (1 + (chargePercent * _chargePower));
+      float curPow = Mathf.Lerp(_basePower, _chargePower, chargePercent);
 
       newBallBody.velocity = (direction * curPow);// +_shipController.curVelocity;
-      newBall.Fired(chargePercent);
+      newBall.Fired(chargePercent, _friendlyTag);
 
       return true;
     }
@@ -219,10 +222,10 @@ public class Canon : MonoBehaviour
 
       float chargePercent = _curChargeTime / chargeTime;
 
-      float curPow = _basePower * (1 + (chargePercent * _chargePower));
+      float curPow = Mathf.Lerp(_basePower, _chargePower, chargePercent);
 
       newBallBody.velocity = (direction * curPow);// +_shipController.curVelocity;
-      newBall.Fired(chargePercent);
+      newBall.Fired(chargePercent, _friendlyTag);
 
       return true;
     }

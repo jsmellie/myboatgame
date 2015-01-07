@@ -6,7 +6,9 @@ public class CanonBall : MonoBehaviour
   const string RESTART_TRIGGER = "Restart";
   const string FIRE_TRIGGER = "Fired";
   const float SIZE_MODIFIER = 0.5f;
-  const float MAX_LIFESPAN = 5.0f;
+
+  [SerializeField]
+  protected float _maxLifespan = 5.0f;
 
   protected float _size = float.NaN;
   protected float _firedTime = float.NaN;
@@ -57,21 +59,23 @@ public class CanonBall : MonoBehaviour
 
   protected virtual void Update()
   {
-    if (Time.time > _firedTime + MAX_LIFESPAN)
+    if (Time.time > _firedTime + _maxLifespan)
     {
       Destroy(this.gameObject);
     }
   }
 
-  public virtual void Fired(float chargeModifier)
+  public virtual void Fired(float chargeModifier, string friendlyTag = "", Canon.Size size = Canon.Size.Medium)
   {
     if (_animator != null)
     {
       _animator.SetTrigger(FIRE_TRIGGER);
     }
 
+    _size = (int)size * SIZE_MODIFIER;
     _chargeModifier = chargeModifier;
     _firedTime = Time.time;
+    _friendlyTag = friendlyTag;
   }
 
   public void SetSize(Canon.Size size)
@@ -90,12 +94,12 @@ public class CanonBall : MonoBehaviour
     _firedTime = float.NaN;
     _chargeModifier = float.NaN;
   }
-
-  void OnTriggerEnter2D(Collider2D collidingObj)
+  
+  void OnCollisionEnter2D(Collision2D coll)
   {
-    if (collidingObj.tag != _friendlyTag && collidingObj.tag != "MainCamera")
+    if (coll.collider.tag != _friendlyTag && coll.collider.tag != Tags.MainCamera)
     {
-      Debug.Log("Canon Ball collided with " + collidingObj.name);
+      Destroy(this.gameObject);
     }
   }
 

@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class ShipController : MonoBehaviour, IShipPart
+public class ShipController : ObjectController, IShipPart
 {
   #region Constants
   protected float[] DEFAULT_INCREMENTS = { 0.5f, 1.0f, 1.5f };
@@ -17,9 +17,23 @@ public class ShipController : MonoBehaviour, IShipPart
 
   [SerializeField, Range(0.0001f, 1.0f)]
   protected float _movementAcceleration = 0.1f;
+  protected float movementAcceleration
+  {
+    get
+    {
+      return _movementAcceleration / _body.mass;
+    }
+  }
 
   [SerializeField, Range(0.0001f, 5.0f)]
   protected float _rotationAcceleration = 0.1f;
+  protected float rotationAcceleration
+  {
+    get
+    {
+      return _rotationAcceleration / _body.mass;
+    }
+  }
   [SerializeField]
   protected float _baseSpeed;
   [SerializeField]
@@ -28,10 +42,8 @@ public class ShipController : MonoBehaviour, IShipPart
   protected int _speedIndex = -1;
 
   protected float _maxSpeed = float.NaN;
-  protected float _cachedSpeed = float.NaN;
 
   protected Transform _xform;
-  protected Rigidbody2D _body;
 
   protected Vector2 _camMin;
   protected Vector2 _camMax;
@@ -44,15 +56,28 @@ public class ShipController : MonoBehaviour, IShipPart
 
   #region Functions
 
+  #region IShipPart Implementation
+
+  //For the time being, we don't use this here.  In the future, we might use it to determine if the ship have crappier control or turning or something
+  public void DamageTaken(float damage, ContactPoint2D[] contacts) { }
+
+  #endregion
+
   #region Unity Functions
   /// <summary>
   /// Called once 
   /// </summary>
-  protected virtual void Awake()
+  protected override void Awake()
   {
+    base.Awake();
+
     //Save a ref to the xform to make it easier to use later
     _xform = this.GetComponent<Transform>();
-    _body = this.GetComponent<Rigidbody2D>();
+
+    if (_xform == null)
+    {
+      throw new System.NotSupportedException("A ShipController must have a Transform on it!  I don't even know how this is possible...");
+    }
 
     //Add this to the ships list of parts
     Transform curXform = _xform;
@@ -123,7 +148,7 @@ public class ShipController : MonoBehaviour, IShipPart
   /// <summary>
   /// Called every frame to update the ship.
   /// </summary>
-  protected virtual void Update()
+  protected override void Update()
   {
     //Make sure everything is set up nicely
     if (_maxSpeed != float.NaN)
@@ -135,6 +160,8 @@ public class ShipController : MonoBehaviour, IShipPart
       Vector2 direction = _xform.rotation * Vector2.up;
 
       _body.velocity = direction * currentSpeed;
+
+      _cachedVelocity = _body.velocity;
     }
   }
   #endregion
@@ -172,14 +199,14 @@ public class ShipController : MonoBehaviour, IShipPart
     {
       if (currentSpeed > _maxSpeed)
       {
-        currentSpeed -= _movementAcceleration;
+        currentSpeed -= movementAcceleration;
       }
       else
       {
-        currentSpeed += _movementAcceleration;
+        currentSpeed += movementAcceleration;
       }
 
-      if (currentSpeed > _maxSpeed - _movementAcceleration && currentSpeed < _maxSpeed + _movementAcceleration)
+      if (currentSpeed > _maxSpeed - movementAcceleration && currentSpeed < _maxSpeed + movementAcceleration)
       {
         currentSpeed = _maxSpeed;
       }
@@ -223,7 +250,7 @@ public class ShipController : MonoBehaviour, IShipPart
       //Make sure that intensity is never over 1
       intensity = Mathf.Clamp(intensity, -1, 1);
 
-      float rotAmount = _rotationAcceleration * intensity;
+      float rotAmount = rotationAcceleration * intensity;
 
       _body.MoveRotation(_xform.rotation.eulerAngles.z + rotAmount);
       //_xform.Rotate(0, 0, rotAmount);

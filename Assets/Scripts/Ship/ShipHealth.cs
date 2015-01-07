@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class ShipHull : DamageableObject, IShipPart
+public class ShipHealth : DamageableObject, IShipPart
 {
   #region Fields & Properties
 
@@ -15,8 +15,10 @@ public class ShipHull : DamageableObject, IShipPart
 
   #region Functions
 
-  public virtual void Awake()
+  protected override void Awake()
   {
+    base.Awake();
+
     //Add this to the ships list of parts
     Transform curXform = this.GetComponent<Transform>();
 
@@ -37,12 +39,17 @@ public class ShipHull : DamageableObject, IShipPart
     }
   }
 
+  public void DamageTaken(float damage, ContactPoint2D[] contacts)
+  {
+    base.DamageTaken(damage);
+
+    //TODO: Maybe do something with the contact points.
+  }
+
   public override void Dead()
   {
     Debug.Log(_ship.name + " has died!");
   }
-
-
-
+  
   #endregion
 }

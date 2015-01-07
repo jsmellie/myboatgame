@@ -110,7 +110,7 @@ public class InputManager : MonoBehaviour
       {
         _player2CanonController.FireLeftSide();
       }
-      if (Input.GetKeyDown(KeyCode.Backslash))
+      if (Input.GetKeyDown(KeyCode.Slash))
       {
         _player2CanonController.FireRightSide();
       }

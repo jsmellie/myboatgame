@@ -5,6 +5,23 @@ public abstract class DamageableObject : MonoBehaviour
 {
   [SerializeField]
   protected float _maxHealth;
+  public virtual float maxHealth
+  {
+    get
+    {
+      return _maxHealth;
+    }
+  }
+
+  [SerializeField]
+  protected float _startingHealth;
+  public virtual float startingHealth
+  {
+    get
+    {
+      return _startingHealth;
+    }
+  }
 
   protected float _health;
   public virtual float health
@@ -23,6 +40,11 @@ public abstract class DamageableObject : MonoBehaviour
     {
       return _armour;
     }
+  }
+
+  protected virtual void Awake()
+  {
+    _health = _startingHealth;
   }
 
   public virtual void DamageTaken(float damage)

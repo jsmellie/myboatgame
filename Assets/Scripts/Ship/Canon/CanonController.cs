@@ -18,6 +18,13 @@ public class CanonController : MonoBehaviour, IShipPart
 
   #region Functions
 
+  #region IShipPart Implementation
+
+  //For the time being, we don't use this here.  In the future, we might use it to determine if certain canons have broken or something if we g down that route
+  public void DamageTaken(float damage, ContactPoint2D[] contacts) { }
+
+  #endregion
+
   #region List Manipulation
 
   public void AddCanon(Canon canon)
