@@ -247,5 +247,9 @@ public class Ship : MonoBehaviour
 
   #endregion
 
+  public void SetHullSprite(Sprite hull)
+  {
+    GetComponent<SpriteRenderer>().sprite = hull;
+  }
   #endregion
 }
