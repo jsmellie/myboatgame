@@ -256,24 +256,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bff94df24b08c0540be1b1ede55d3aa7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerCount: 4
+  playerCount: 2
   player1SpawnInfo:
-    spawnLocation: {x: -6, y: -3.5}
-    rotation: 18.3070984
+    spawnLocation: {x: -8, y: -3.5}
+    rotation: 0
     shipPrefab: {fileID: 11487502, guid: 9dd7cdfbbbb38404da4f1bb2bb5e3e15, type: 2}
     hullImage: {fileID: 21300000, guid: 3f3c40c9d60715441816a12ad84bd091, type: 3}
   player2SpawnInfo:
-    spawnLocation: {x: 6, y: 3.5}
+    spawnLocation: {x: 8, y: 3.5}
     rotation: 180
     shipPrefab: {fileID: 11487502, guid: 9dd7cdfbbbb38404da4f1bb2bb5e3e15, type: 2}
     hullImage: {fileID: 21300000, guid: ac53399791623534ab01c8e0ceb5cb4a, type: 3}
   player3SpawnInfo:
-    spawnLocation: {x: -6, y: 3.5}
+    spawnLocation: {x: -8, y: 3.5}
     rotation: 180
     shipPrefab: {fileID: 0}
     hullImage: {fileID: 0}
   player4SpawnInfo:
-    spawnLocation: {x: 6, y: -3.5}
+    spawnLocation: {x: 8, y: -3.5}
     rotation: 0
     shipPrefab: {fileID: 0}
     hullImage: {fileID: 0}

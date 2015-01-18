@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class FourPlayerSpawner : BaseSpawner
+public class MultiplayerPlayerSpawner : BaseSpawner
 {
   #region Constants
 

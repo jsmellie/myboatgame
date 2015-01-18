@@ -2,13 +2,15 @@
 using UnityEditor;
 using System.Collections;
 
-[CustomEditor(typeof(FourPlayerSpawner))]
-public class FourPlayerSpawnerInspector : Editor 
+[CustomEditor(typeof(MultiplayerPlayerSpawner))]
+public class MultiplayerPlayerSpawnerInspector : Editor 
 {
+  Tool activeTool = Tool.None;
+  Tool localTool = Tool.Move;
   bool[] playerFoldouts = new bool[4];
-  FourPlayerSpawner _playerSpawner = null;
+  MultiplayerPlayerSpawner _playerSpawner = null;
 
-  FourPlayerSpawner playerSpawner
+  MultiplayerPlayerSpawner playerSpawner
   {
     get
     {
@@ -21,9 +23,34 @@ public class FourPlayerSpawnerInspector : Editor
     }
   }
 
+  void SetTool()
+  {
+    activeTool = Tools.current;
+
+    switch (activeTool)
+    {
+      case Tool.Move:
+      case Tool.Rotate:
+        localTool = activeTool;
+        break;
+    }
+
+    Tools.current = Tool.None;
+  }
+
+  void OnEnable()
+  {
+    SetTool();
+  }
+
+  void OnDisable()
+  {
+    Tools.current = activeTool;
+  }
+
   protected virtual void Init()
   {
-    _playerSpawner = target as FourPlayerSpawner;
+    _playerSpawner = target as MultiplayerPlayerSpawner;
 
     playerFoldouts[0] = false;
     playerFoldouts[1] = false;
@@ -33,16 +60,55 @@ public class FourPlayerSpawnerInspector : Editor
 
   void OnSceneGUI()
   {
-    if (GUI.changed)
+    SetTool();
+
+    if (playerSpawner.drawGizmo)
     {
-      EditorUtility.SetDirty(target);
+      if (localTool == Tool.Rotate)
+      {
+        if (playerSpawner.playerCount >= 1)
+        {
+          playerSpawner.player1SpawnInfo.rotation = Handles.RotationHandle(Quaternion.Euler(0, 0, playerSpawner.player1SpawnInfo.rotation), (Vector3)playerSpawner.player1SpawnInfo.spawnLocation).eulerAngles.z;
+        }
+        if (playerSpawner.playerCount >= 2)
+        {
+          playerSpawner.player2SpawnInfo.rotation = Handles.RotationHandle(Quaternion.Euler(0, 0, playerSpawner.player2SpawnInfo.rotation), (Vector3)playerSpawner.player2SpawnInfo.spawnLocation).eulerAngles.z;
+        }
+        if (playerSpawner.playerCount >= 3)
+        {
+          playerSpawner.player3SpawnInfo.rotation = Handles.RotationHandle(Quaternion.Euler(0, 0, playerSpawner.player3SpawnInfo.rotation), (Vector3)playerSpawner.player3SpawnInfo.spawnLocation).eulerAngles.z;
+        }
+        if (playerSpawner.playerCount >= 4)
+        {
+          playerSpawner.player4SpawnInfo.rotation = Handles.RotationHandle(Quaternion.Euler(0, 0, playerSpawner.player4SpawnInfo.rotation), (Vector3)playerSpawner.player4SpawnInfo.spawnLocation).eulerAngles.z;
+        }
+      }
+      else
+      {
+        if (playerSpawner.playerCount >= 1)
+        {
+          playerSpawner.player1SpawnInfo.spawnLocation = (Vector2)Handles.PositionHandle((Vector3)playerSpawner.player1SpawnInfo.spawnLocation, Quaternion.identity);
+        }
+        if (playerSpawner.playerCount >= 2)
+        {
+          playerSpawner.player2SpawnInfo.spawnLocation = (Vector2)Handles.PositionHandle((Vector3)playerSpawner.player2SpawnInfo.spawnLocation, Quaternion.identity);
+        }
+        if (playerSpawner.playerCount >= 3)
+        {
+          playerSpawner.player3SpawnInfo.spawnLocation = (Vector2)Handles.PositionHandle((Vector3)playerSpawner.player3SpawnInfo.spawnLocation, Quaternion.identity);
+        }
+        if (playerSpawner.playerCount >= 4)
+        {
+          playerSpawner.player4SpawnInfo.spawnLocation = (Vector2)Handles.PositionHandle((Vector3)playerSpawner.player4SpawnInfo.spawnLocation, Quaternion.identity);
+        }
+      }
     }
 
-    //Draw player1 handles
-    playerSpawner.player1SpawnInfo.rotation = Handles.RotationHandle(Quaternion.Euler(0, 0, playerSpawner.player1SpawnInfo.rotation), (Vector3)playerSpawner.player1SpawnInfo.spawnLocation).eulerAngles.z;
+    if (GUI.changed)
+    {
+      EditorUtility.SetDirty(this);
+    }
   }
-
-
 
   public override void  OnInspectorGUI()
   {
@@ -88,22 +154,6 @@ public class FourPlayerSpawnerInspector : Editor
     playerSpawner.player2GizmoColor = EditorGUILayout.ColorField("Player 2 Gizmo Color", playerSpawner.player2GizmoColor);
     playerSpawner.player3GizmoColor = EditorGUILayout.ColorField("Player 3 Gizmo Color", playerSpawner.player3GizmoColor);
     playerSpawner.player4GizmoColor = EditorGUILayout.ColorField("Player 4 Gizmo Color", playerSpawner.player4GizmoColor);
-    /*
-     * Inspector look
-     * 
-     * PLAYER INFO
-     * 
-     * Number of Players (Drop down 1-4)
-     * 
-     * For each player fold out with following info:
-     * Spawn location (X,Y)
-     * Rotation
-     * TEMP: Ship Prefab
-     * TEMP: Hull Image
-     * */
-    GUILayout.Space(30);
-
-    DrawDefaultInspector();
   }
 
   protected void DrawPlayerInfo(ref PlayerShipSpawnInfo playerInfo, int playerIndex)
