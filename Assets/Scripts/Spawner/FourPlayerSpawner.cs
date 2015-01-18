@@ -15,28 +15,19 @@ public class FourPlayerSpawner : BaseSpawner
 
   #region Fields & Properties
 
-  [Header("Player Spawn Info")]
-  [SerializeField]
-  protected PlayerShipSpawnInfo player1SpawnInfo;
-  [SerializeField]
-  protected PlayerShipSpawnInfo player2SpawnInfo;
-  [SerializeField]
-  protected PlayerShipSpawnInfo player3SpawnInfo;
-  [SerializeField]
-  protected PlayerShipSpawnInfo player4SpawnInfo;
+  public int playerCount = 2;
+
+  public PlayerShipSpawnInfo player1SpawnInfo;
+  public PlayerShipSpawnInfo player2SpawnInfo;
+  public PlayerShipSpawnInfo player3SpawnInfo;
+  public PlayerShipSpawnInfo player4SpawnInfo;
 
 #if UNITY_EDITOR
-  [Header("Editor Fields")]
   public bool drawGizmo = true;
-  [Space(10)]
-  [SerializeField]
-  protected Color player1GizmoColor = Color.green;
-  [SerializeField]
-  protected Color player2GizmoColor = Color.red;
-  [SerializeField]
-  protected Color player3GizmoColor = Color.blue;
-  [SerializeField]
-  protected Color player4GizmoColor = Color.yellow;
+  public Color player1GizmoColor = Color.green;
+  public Color player2GizmoColor = Color.red;
+  public Color player3GizmoColor = Color.blue;
+  public Color player4GizmoColor = Color.yellow;
 #endif
 
   #endregion
@@ -74,10 +65,22 @@ public class FourPlayerSpawner : BaseSpawner
     if (drawGizmo)
     {
       //Draw player1 gizmo
-      DrawPlayerGizmo(player1GizmoColor, player1SpawnInfo.spawnLocation, player1SpawnInfo.rotation);
-      DrawPlayerGizmo(player2GizmoColor, player2SpawnInfo.spawnLocation, player2SpawnInfo.rotation);
-      DrawPlayerGizmo(player3GizmoColor, player3SpawnInfo.spawnLocation, player3SpawnInfo.rotation);
-      DrawPlayerGizmo(player4GizmoColor, player4SpawnInfo.spawnLocation, player4SpawnInfo.rotation);
+      if (playerCount >= 1)
+      {
+        DrawPlayerGizmo(player1GizmoColor, player1SpawnInfo.spawnLocation, player1SpawnInfo.rotation);
+      }
+      if (playerCount >= 2)
+      {
+        DrawPlayerGizmo(player2GizmoColor, player2SpawnInfo.spawnLocation, player2SpawnInfo.rotation);
+      }
+      if (playerCount >= 3)
+      {
+        DrawPlayerGizmo(player3GizmoColor, player3SpawnInfo.spawnLocation, player3SpawnInfo.rotation);
+      }
+      if (playerCount >= 4)
+      {
+        DrawPlayerGizmo(player4GizmoColor, player4SpawnInfo.spawnLocation, player4SpawnInfo.rotation);
+      }
     }
   }
 

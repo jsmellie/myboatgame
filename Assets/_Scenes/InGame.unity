@@ -256,9 +256,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bff94df24b08c0540be1b1ede55d3aa7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerCount: 4
   player1SpawnInfo:
-    spawnLocation: {x: -3.25, y: -3.5}
-    rotation: -27.6000004
+    spawnLocation: {x: -6, y: -3.5}
+    rotation: 18.3070984
     shipPrefab: {fileID: 11487502, guid: 9dd7cdfbbbb38404da4f1bb2bb5e3e15, type: 2}
     hullImage: {fileID: 21300000, guid: 3f3c40c9d60715441816a12ad84bd091, type: 3}
   player2SpawnInfo:
@@ -288,7 +289,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 834255032}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 4.49397278, y: 5.14066315, z: 5.22598362}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
