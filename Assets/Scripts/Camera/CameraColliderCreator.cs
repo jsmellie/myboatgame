@@ -27,11 +27,11 @@ public class CameraColliderCreator : MonoBehaviour
       BoxCollider2D fullSizeCollider = gameObject.AddComponent<BoxCollider2D>();
       fullSizeCollider.isTrigger = true;
       fullSizeCollider.size = camSize * 2;
-      fullSizeCollider.center = Vector2.zero;
+      fullSizeCollider.offset = Vector2.zero;
 
       BoxCollider2D biggerCollider = gameObject.AddComponent<BoxCollider2D>();
       biggerCollider.isTrigger = true;
-      biggerCollider.center = fullSizeCollider.center;
+      biggerCollider.offset = fullSizeCollider.offset;
       biggerCollider.size = fullSizeCollider.size + new Vector2(_biggerColliderSizeDif, _biggerColliderSizeDif);
 
 
