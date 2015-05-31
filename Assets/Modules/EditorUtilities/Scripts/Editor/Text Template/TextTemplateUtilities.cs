@@ -35,10 +35,14 @@ namespace EditorUtilities
         //const
         private const string LICENSE_FILE_KEY = "TextTemplateMacroReplacer_LicenseFile";
         private const string AUTHOR_KEY = "TextTemplateMacroReplacer_Author";
-        private const string USE_LONG_NAMESPACE_KEY = "TextTemplateMacroReplacer_UseNamespace";
-        private const string NAMESPACE_COUNT_KEY = "TextTemplateMacroReplacer_NamespaceCout";
-        private const string NAMESPACE_TYPE_KEY = "TextTemplateMacroReplacer_NamespaceType";
 
+        private const string PROJECT_NAMESPACE_COUNT_KEY = "TextTemplateMacroReplacer_ProjectNamespaceCout";
+        private const string PROJECT_NAMESPACE_TYPE_KEY = "TextTemplateMacroReplacer_ProjectNamespaceType";
+        private const string PROJECT_USE_LONG_NAMESPACE_KEY = "TextTemplateMacroReplacer_ProjectUseLongNamespace";
+
+        private const string MODULE_NAMESPACE_COUNT_KEY = "TextTemplateMacroReplacer_ModuleNamespaceCout";
+        private const string MODULE_NAMESPACE_TYPE_KEY = "TextTemplateMacroReplacer_ModuleNamespaceType";
+        private const string MODULE_USE_LONG_NAMESPACE_KEY = "TextTemplateMacroReplacer_ModuleUseLongNamespace";
 
         private const string SCRIPT_TEMPLATE_PATH = "Data/Resources/ScriptTemplates/";
         private const string CSHARP_TEMPLATE_FILENAME = "81-C# Script-NewBehaviourScript.cs.text";
@@ -60,27 +64,27 @@ namespace EditorUtilities
             set { EditorPrefs.SetString(AUTHOR_KEY, value); }
         }
 
-        private static bool UseDescriptiveNamespace
+        private static bool ProjectUseDescriptiveNamespace
         {
-            get { return EditorPrefs.GetBool(USE_LONG_NAMESPACE_KEY, false); }
-            set { EditorPrefs.SetBool(USE_LONG_NAMESPACE_KEY, value); }
+            get { return EditorPrefs.GetBool(PROJECT_USE_LONG_NAMESPACE_KEY, false); }
+            set { EditorPrefs.SetBool(PROJECT_USE_LONG_NAMESPACE_KEY, value); }
         }
 
-        private static int NamespaceCount
+        private static int ProjectNamespaceCount
         {
-            get { return NamespaceTypes.Length; }
+            get { return ProjectNamespaceTypes.Length; }
         }
 
-        private static TextTemplateUtilities.eNamespaceType[] NamespaceTypes
+        private static TextTemplateUtilities.eNamespaceType[] ProjectNamespaceTypes
         {
             get
             {
-                string[] typesStrArray = EditorPrefs.GetString(NAMESPACE_TYPE_KEY, string.Empty).Split(NAMESPACE_SEPERATOR_CHAR);
+                string[] typesStrArray = EditorPrefs.GetString(PROJECT_NAMESPACE_TYPE_KEY, string.Empty).Split(NAMESPACE_SEPERATOR_CHAR);
 
                 if (typesStrArray.Length == 0 || string.IsNullOrEmpty(typesStrArray[0]))
                 {
-                    NamespaceTypes = new TextTemplateUtilities.eNamespaceType[] { TextTemplateUtilities.eNamespaceType.NONE };
-                    return NamespaceTypes;
+                    ProjectNamespaceTypes = new TextTemplateUtilities.eNamespaceType[] { TextTemplateUtilities.eNamespaceType.NONE };
+                    return ProjectNamespaceTypes;
                 }
                 else
                 {
@@ -107,7 +111,58 @@ namespace EditorUtilities
 
                     types += (int)value[i];
                 }
-                EditorPrefs.SetString(NAMESPACE_TYPE_KEY, types);
+                EditorPrefs.SetString(PROJECT_NAMESPACE_TYPE_KEY, types);
+            }
+        }
+
+        private static bool ModuletUseDescriptiveNamespace
+        {
+            get { return EditorPrefs.GetBool(MODULE_USE_LONG_NAMESPACE_KEY, false); }
+            set { EditorPrefs.SetBool(MODULE_USE_LONG_NAMESPACE_KEY, value); }
+        }
+
+        private static int ModuleNamespaceCount
+        {
+            get { return ModuleNamespaceTypes.Length; }
+        }
+
+        private static TextTemplateUtilities.eNamespaceType[] ModuleNamespaceTypes
+        {
+            get
+            {
+                string[] typesStrArray = EditorPrefs.GetString(MODULE_NAMESPACE_TYPE_KEY, string.Empty).Split(NAMESPACE_SEPERATOR_CHAR);
+
+                if (typesStrArray.Length == 0 || string.IsNullOrEmpty(typesStrArray[0]))
+                {
+                    ModuleNamespaceTypes = new TextTemplateUtilities.eNamespaceType[] { TextTemplateUtilities.eNamespaceType.NONE };
+                    return ProjectNamespaceTypes;
+                }
+                else
+                {
+                    TextTemplateUtilities.eNamespaceType[] retVal = new TextTemplateUtilities.eNamespaceType[typesStrArray.Length];
+
+                    for (int i = 0; i < retVal.Length; ++i)
+                    {
+                        retVal[i] = (TextTemplateUtilities.eNamespaceType)int.Parse(typesStrArray[i]);
+                    }
+
+                    return retVal;
+                }
+            }
+            set
+            {
+                string types = string.Empty;
+
+                for (int i = 0; i < value.Length; ++i)
+                {
+                    if (i != 0)
+                    {
+                        types += NAMESPACE_SEPERATOR_CHAR;
+                    }
+
+                    types += (int)value[i];
+                }
+                EditorPrefs.SetString(MODULE_NAMESPACE_TYPE_KEY, types);
             }
         }
         #endregion
@@ -119,8 +174,8 @@ namespace EditorUtilities
         #endregion
 
         #region Private Methods
-        private static bool shouldShow = false;
-        private static int size;
+        private static bool shouldShowProjectSettings = false;
+        private static bool shouldShowModuleSettings = false;
 
         [PreferenceItem("Text Template")]
         private static void OnPreferenceItem()
@@ -155,12 +210,12 @@ namespace EditorUtilities
 
             EditorGUILayout.Space();
 
-            shouldShow = EditorGUILayout.Foldout(shouldShow, "Namespace Settings");
+            shouldShowProjectSettings = EditorGUILayout.Foldout(shouldShowProjectSettings, "Project Namespace Settings");
 
-            if (shouldShow)
+            if (shouldShowProjectSettings)
             {
                 EditorGUI.indentLevel = 1;
-                List<TextTemplateUtilities.eNamespaceType> namespaceTypes = new List<TextTemplateUtilities.eNamespaceType>(NamespaceTypes);
+                List<TextTemplateUtilities.eNamespaceType> namespaceTypes = new List<TextTemplateUtilities.eNamespaceType>(ProjectNamespaceTypes);
 
                 int size = EditorGUILayout.IntField("Size: ", namespaceTypes.Count);
 
@@ -207,7 +262,7 @@ namespace EditorUtilities
                     }
                 }
 
-                NamespaceTypes = namespaceTypes.ToArray();
+                ProjectNamespaceTypes = namespaceTypes.ToArray();
                 if (elementDisabled)
                 {
                     GUI.enabled = true;
@@ -215,11 +270,79 @@ namespace EditorUtilities
 
                 EditorGUILayout.Space();
 
-                UseDescriptiveNamespace = EditorGUILayout.Toggle("Use Descriptive Namespace: ", UseDescriptiveNamespace);
+                ProjectUseDescriptiveNamespace = EditorGUILayout.Toggle("Use Descriptive Namespace: ", ProjectUseDescriptiveNamespace);
                 GUI.enabled = true;
             }
 
             EditorGUI.indentLevel = 0;
+
+            EditorGUILayout.Space();
+
+            shouldShowModuleSettings = EditorGUILayout.Foldout(shouldShowModuleSettings, "Module Namespace Settings");
+            if (shouldShowModuleSettings)
+            {
+                EditorGUI.indentLevel = 1;
+                List<TextTemplateUtilities.eNamespaceType> namespaceTypes = new List<TextTemplateUtilities.eNamespaceType>(ModuleNamespaceTypes);
+
+                int size = EditorGUILayout.IntField("Size: ", namespaceTypes.Count);
+
+                if (size > 5)
+                {
+                    size = 5;
+                }
+                else if (size < 1)
+                {
+                    size = 1;
+                }
+
+                if (size != namespaceTypes.Count)
+                {
+                    int dif = size - namespaceTypes.Count;
+
+                    while (dif < 0)
+                    {
+                        namespaceTypes.RemoveAt(namespaceTypes.Count - 1);
+                        dif += 1;
+                    }
+
+                    while (dif > 0)
+                    {
+                        namespaceTypes.Add(TextTemplateUtilities.eNamespaceType.COMPAGNY_NAME);
+                        dif -= 1;
+                    }
+                }
+
+                bool elementDisabled = false;
+                for (int i = 0; i < namespaceTypes.Count; ++i)
+                {
+                    namespaceTypes[i] = (TextTemplateUtilities.eNamespaceType)EditorGUILayout.EnumPopup("Namespace Type " + i + ": ", namespaceTypes[i]);
+
+                    if (namespaceTypes[i] == TextTemplateUtilities.eNamespaceType.NONE)
+                    {
+                        elementDisabled = false;
+                        GUI.enabled = false;
+                    }
+                    else if (GUI.enabled && namespaceTypes[i] == TextTemplateUtilities.eNamespaceType.DIRECTORY)
+                    {
+                        elementDisabled = true;
+                        GUI.enabled = false;
+                    }
+                }
+
+                ModuleNamespaceTypes = namespaceTypes.ToArray();
+                if (elementDisabled)
+                {
+                    GUI.enabled = true;
+                }
+
+                EditorGUILayout.Space();
+
+                ProjectUseDescriptiveNamespace = EditorGUILayout.Toggle("Use Descriptive Namespace: ", ProjectUseDescriptiveNamespace);
+                GUI.enabled = true;
+            }
+
+            EditorGUI.indentLevel = 0;
+
             GUILayout.FlexibleSpace();
 
             GUILayout.BeginHorizontal();
@@ -271,25 +394,35 @@ namespace EditorUtilities
             string file = path.Substring(index);
             if (file != ".cs" && file != ".js" && file != ".boo") return;
 
-            TextTemplateUtilities.eNamespaceType[] namespaceTypes = NamespaceTypes;
-
             string ns = string.Empty;
 
             string[] folders = Path.GetDirectoryName(path).Split('/');
 
             int namespaceIndex = 0;
 
+            bool isModuleSript = false;
+
             while (namespaceIndex < folders.Length && (folders[namespaceIndex] == "Assets" || folders[namespaceIndex] == "Modules" || folders[namespaceIndex] == "Scripts"))
             {
+                if (folders[namespaceIndex] == "Modules")
+                {
+                    isModuleSript = true;
+                }
                 namespaceIndex += 1;
             }
 
-            if (namespaceTypes == null || namespaceTypes.Length == 0 || namespaceTypes[0] == TextTemplateUtilities.eNamespaceType.NONE)
+            TextTemplateUtilities.eNamespaceType[] namespaceTypes;
+
+            if (isModuleSript)
             {
-                //Don't Use a namespace!
-                ns = "DEFAULT_NAMESPACE";
+                namespaceTypes = ModuleNamespaceTypes;
             }
             else
+            {
+                namespaceTypes = ProjectNamespaceTypes;
+            }
+
+            if (namespaceTypes != null && namespaceTypes.Length > 0 && namespaceTypes[0] != TextTemplateUtilities.eNamespaceType.NONE)
             {
                 for (int i = 0; i < namespaceTypes.Length; ++i)
                 {
@@ -328,7 +461,7 @@ namespace EditorUtilities
                 }
             }
 
-            if (!string.IsNullOrEmpty(ns) && UseDescriptiveNamespace)
+            if (!string.IsNullOrEmpty(ns) && ProjectUseDescriptiveNamespace)
             {
                 while (namespaceIndex < folders.Length)
                 {
@@ -353,8 +486,43 @@ namespace EditorUtilities
             file = file.Replace("#AUTHOR#", string.IsNullOrEmpty(Author) ? "" : Author);
             file = file.Replace("#CODE-COMPANYNAME#", TextTemplateMacroReplacer.CodifyString(PlayerSettings.companyName));
 
-            //TODO: jsmellie I really need to figure out someway to remove the namespace and it's brackets if ns is empty...  Not sure how to tackle that yet...
-            file = file.Replace("#NAMESPACE#", ns);
+            int startIndex = file.IndexOf("#NAMESPACE-START#");
+            int endIndex = file.IndexOf("#NAMESPACE-END#");
+
+            if (startIndex > 0)
+            {
+                if (endIndex > 0)
+                {
+                    if (!string.IsNullOrEmpty(ns))
+                    {
+                        startIndex += "#NAMESPACE-START#".Length;
+
+                        for (int i = startIndex; i < endIndex - 1; ++i)
+                        {
+                            char curChar = file[i];
+
+                            if (curChar == '\n')
+                            {
+                                file = file.Insert(i + 1, "\t");
+                                endIndex += 1;
+                            }
+                        }
+
+                        file = file.Replace("#NAMESPACE-START#", "namespace " + ns + "\r\n{");
+                        file = file.Replace("#NAMESPACE-END#", "}");
+                    }
+                    else
+                    {
+                        file = file.Replace("#NAMESPACE-START#", "");
+                        file = file.Replace("#NAMESPACE-END#", "");
+                    }
+                }
+                else
+                {
+                    file = file.Replace("#NAMESPACE-START#", "");
+                    file = file.Replace("#NAMESPACE-END#", "");
+                }
+            }
 
             string licenseMsg = DEFAULT_LICENSE;
             if (!string.IsNullOrEmpty(LicenseFilePath))
