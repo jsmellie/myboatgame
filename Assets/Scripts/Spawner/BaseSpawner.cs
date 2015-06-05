@@ -1,58 +1,61 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-[System.Serializable]
-public struct PlayerShipSpawnInfo
+namespace Starvoxel.ThatBoatGame
 {
-  #region Fields & Properties
+    [System.Serializable]
+    public struct PlayerShipSpawnInfo
+    {
+        #region Fields & Properties
 
-  public Vector2 spawnLocation;
-  public float rotation;
-  public Ship shipPrefab; //TODO: Probably resource load this
-  public Sprite hullImage; //TODO: Probably resource load this
+        public Vector2 spawnLocation;
+        public float rotation;
+        public Ship shipPrefab; //TODO: Probably resource load this
+        public Sprite hullImage; //TODO: Probably resource load this
 
-  #endregion
+        #endregion
 
-  #region Constructors
+        #region Constructors
 
-  public PlayerShipSpawnInfo(Vector2 spawnLocation, float rotation, Ship shipPrefab, Sprite hullImage)
-  {
-    this.spawnLocation = spawnLocation;
-    this.rotation = rotation;
-    this.shipPrefab = shipPrefab;
-    this.hullImage = hullImage;
-  }
+        public PlayerShipSpawnInfo(Vector2 spawnLocation, float rotation, Ship shipPrefab, Sprite hullImage)
+        {
+            this.spawnLocation = spawnLocation;
+            this.rotation = rotation;
+            this.shipPrefab = shipPrefab;
+            this.hullImage = hullImage;
+        }
 
-  public Ship Spawn()
-  {
-    Vector3 pos = (Vector3)spawnLocation;
+        public Ship Spawn()
+        {
+            Vector3 pos = (Vector3)spawnLocation;
 
-    Ship spawnedShip = GameObject.Instantiate(shipPrefab, pos, Quaternion.Euler(new Vector3(0, 0, rotation))) as Ship;
+            Ship spawnedShip = GameObject.Instantiate(shipPrefab, pos, Quaternion.Euler(new Vector3(0, 0, rotation))) as Ship;
 
-    return spawnedShip;
-  }
+            return spawnedShip;
+        }
 
-  #endregion
-}
+        #endregion
+    }
 
-abstract public class BaseSpawner : MonoBehaviour
-{
+    abstract public class BaseSpawner : MonoBehaviour
+    {
 
-  #region Fields & Properties
+        #region Fields & Properties
 
-  protected bool _isSpawning = false;
-  public virtual bool isSpawning
-  {
-    get { return _isSpawning; }
-  }
+        protected bool _isSpawning = false;
+        public virtual bool isSpawning
+        {
+            get { return _isSpawning; }
+        }
 
-  #endregion
+        #endregion
 
-  #region Functions
+        #region Functions
 
-  public abstract bool StartSpawner();
+        public abstract bool StartSpawner();
 
-  public abstract bool StopSpawner();
+        public abstract bool StopSpawner();
 
-  #endregion
+        #endregion
+    }
 }

@@ -29,170 +29,173 @@ using System.Collections;
 #endregion
 #endregion
 
-public class InputManager : MonoBehaviour
+namespace Starvoxel.ThatBoatGame
 {
-    #region Fields & Properties
-    //const
-
-    //public
-
-    //protected
-
-    //private
-    private ShipController m_Player1Controller = null;
-    private CanonController m_Player1CanonController = null;
-
-    private ShipController m_Player2Controller = null;
-    private CanonController m_Player2CanonController = null;
-
-    private Collider2D m_LastSlotCollider = null;
-
-    //properties
-    #endregion
-
-    #region Unity Methods
-    void Awake()
+    public class InputManager : MonoBehaviour
     {
-        GameObject player1 = GameObject.FindGameObjectWithTag("Player1");
-        if (player1 != null && player1.GetComponent<ShipController>() != null)
-        {
-            m_Player1Controller = player1.GetComponent<ShipController>();
-            m_Player1CanonController = player1.GetComponentInChildren<CanonController>();
-        }
-        else
-        {
-            Debug.LogError("Could find Player 1.  The game cannot start without a player.");
-            return;
-        }
+        #region Fields & Properties
+        //const
 
-        GameObject player2 = GameObject.FindGameObjectWithTag("Player2");
-        if (player2 != null && player2.GetComponent<ShipController>() != null)
-        {
-            m_Player2Controller = player2.GetComponent<ShipController>();
-            m_Player2CanonController = player2.GetComponentInChildren<CanonController>();
-        }
-    }
+        //public
 
-    void Update()
-    {
-        //If we have a player1, check input for it
-        if (m_Player1Controller != null)
+        //protected
+
+        //private
+        private ShipController m_Player1Controller = null;
+        private CanonController m_Player1CanonController = null;
+
+        private ShipController m_Player2Controller = null;
+        private CanonController m_Player2CanonController = null;
+
+        private Collider2D m_LastSlotCollider = null;
+
+        //properties
+        #endregion
+
+        #region Unity Methods
+        void Awake()
         {
-            if (Input.GetKey(KeyCode.D))
+            GameObject player1 = GameObject.FindGameObjectWithTag("Player1");
+            if (player1 != null && player1.GetComponent<ShipController>() != null)
             {
-                m_Player1Controller.Rotate(-1);
+                m_Player1Controller = player1.GetComponent<ShipController>();
+                m_Player1CanonController = player1.GetComponentInChildren<CanonController>();
             }
-            else if (Input.GetKey(KeyCode.A))
+            else
             {
-                m_Player1Controller.Rotate(1);
+                Debug.LogError("Could find Player 1.  The game cannot start without a player.");
+                return;
             }
 
-            if (Input.GetKeyDown(KeyCode.W))
+            GameObject player2 = GameObject.FindGameObjectWithTag("Player2");
+            if (player2 != null && player2.GetComponent<ShipController>() != null)
             {
-                m_Player1Controller.SpeedUp();
-            }
-            else if (Input.GetKeyDown(KeyCode.S))
-            {
-                m_Player1Controller.SlowDown();
+                m_Player2Controller = player2.GetComponent<ShipController>();
+                m_Player2CanonController = player2.GetComponentInChildren<CanonController>();
             }
         }
 
-        //If we have a player 2, check input for it
-        if (m_Player2Controller != null)
+        void Update()
         {
-            if (Input.GetKey(KeyCode.L))
+            //If we have a player1, check input for it
+            if (m_Player1Controller != null)
             {
-                m_Player2Controller.Rotate(-1);
-            }
-            else if (Input.GetKey(KeyCode.J))
-            {
-                m_Player2Controller.Rotate(1);
+                if (Input.GetKey(KeyCode.D))
+                {
+                    m_Player1Controller.Rotate(-1);
+                }
+                else if (Input.GetKey(KeyCode.A))
+                {
+                    m_Player1Controller.Rotate(1);
+                }
+
+                if (Input.GetKeyDown(KeyCode.W))
+                {
+                    m_Player1Controller.SpeedUp();
+                }
+                else if (Input.GetKeyDown(KeyCode.S))
+                {
+                    m_Player1Controller.SlowDown();
+                }
             }
 
-            if (Input.GetKeyDown(KeyCode.I))
+            //If we have a player 2, check input for it
+            if (m_Player2Controller != null)
             {
-                m_Player2Controller.SpeedUp();
-            }
-            else if (Input.GetKeyDown(KeyCode.K))
-            {
-                m_Player2Controller.SlowDown();
-            }
-        }
+                if (Input.GetKey(KeyCode.L))
+                {
+                    m_Player2Controller.Rotate(-1);
+                }
+                else if (Input.GetKey(KeyCode.J))
+                {
+                    m_Player2Controller.Rotate(1);
+                }
 
-        //If we have a player 1 canon controller, check input for it
-        if (m_Player1CanonController != null)
-        {
-            if (Input.GetKeyDown(KeyCode.C))
-            {
-                m_Player1CanonController.FireLeftSide();
+                if (Input.GetKeyDown(KeyCode.I))
+                {
+                    m_Player2Controller.SpeedUp();
+                }
+                else if (Input.GetKeyDown(KeyCode.K))
+                {
+                    m_Player2Controller.SlowDown();
+                }
             }
-            if (Input.GetKeyDown(KeyCode.V))
-            {
-                m_Player1CanonController.FireRightSide();
-            }
-        }
 
-        //If we have a player 2 canon controller, check input for it
-        if (m_Player2CanonController != null)
-        {
-            if (Input.GetKeyDown(KeyCode.Period))
+            //If we have a player 1 canon controller, check input for it
+            if (m_Player1CanonController != null)
             {
-                m_Player2CanonController.FireLeftSide();
+                if (Input.GetKeyDown(KeyCode.C))
+                {
+                    m_Player1CanonController.FireLeftSide();
+                }
+                if (Input.GetKeyDown(KeyCode.V))
+                {
+                    m_Player1CanonController.FireRightSide();
+                }
             }
-            if (Input.GetKeyDown(KeyCode.Slash))
-            {
-                m_Player2CanonController.FireRightSide();
-            }
-        }
-        /*
-        if (Input.GetMouseButton(0))
-        {
-          RaycastHit2D testHit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero, 100, m_CanonSlotMask.value);
 
-          if (testHit.collider != null)
-          {
-            if (m_LastSlotCollider != testHit.collider)
+            //If we have a player 2 canon controller, check input for it
+            if (m_Player2CanonController != null)
             {
-              if (m_LastSlotCollider != null)
+                if (Input.GetKeyDown(KeyCode.Period))
+                {
+                    m_Player2CanonController.FireLeftSide();
+                }
+                if (Input.GetKeyDown(KeyCode.Slash))
+                {
+                    m_Player2CanonController.FireRightSide();
+                }
+            }
+            /*
+            if (Input.GetMouseButton(0))
+            {
+              RaycastHit2D testHit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero, 100, m_CanonSlotMask.value);
+
+              if (testHit.collider != null)
+              {
+                if (m_LastSlotCollider != testHit.collider)
+                {
+                  if (m_LastSlotCollider != null)
+                  {
+                    ResetLastSlotCollider();
+                  }
+                  m_LastSlotCollider = testHit.collider;
+                  SpriteRenderer renderer = m_LastSlotCollider.GetComponent<SpriteRenderer>();
+                  if (renderer != null)
+                  {
+                    renderer.color = Color.blue;
+                  }
+                }
+              }
+              else if (m_LastSlotCollider != null)
               {
                 ResetLastSlotCollider();
               }
-              m_LastSlotCollider = testHit.collider;
-              SpriteRenderer renderer = m_LastSlotCollider.GetComponent<SpriteRenderer>();
-              if (renderer != null)
-              {
-                renderer.color = Color.blue;
-              }
             }
-          }
-          else if (m_LastSlotCollider != null)
-          {
-            ResetLastSlotCollider();
-          }
+            else if (Input.GetMouseButtonUp(0) && m_LastSlotCollider != null)
+            {
+              //TODO: If we are currently trying to place a canon, spawn one on the collider
+              ResetLastSlotCollider();
+            }*/
         }
-        else if (Input.GetMouseButtonUp(0) && m_LastSlotCollider != null)
+        #endregion
+
+        #region Public Methods
+        #endregion
+
+        #region Protected Methods
+        #endregion
+
+        #region Private Methods
+        void ResetLastSlotCollider()
         {
-          //TODO: If we are currently trying to place a canon, spawn one on the collider
-          ResetLastSlotCollider();
-        }*/
-    }
-    #endregion
-
-    #region Public Methods
-    #endregion
-
-    #region Protected Methods
-    #endregion
-
-    #region Private Methods
-    void ResetLastSlotCollider()
-    {
-        SpriteRenderer oldRenderer = m_LastSlotCollider.GetComponent<SpriteRenderer>();
-        if (oldRenderer != null)
-        {
-            oldRenderer.color = Color.white;
+            SpriteRenderer oldRenderer = m_LastSlotCollider.GetComponent<SpriteRenderer>();
+            if (oldRenderer != null)
+            {
+                oldRenderer.color = Color.white;
+            }
+            m_LastSlotCollider = null;
         }
-        m_LastSlotCollider = null;
+        #endregion
     }
-    #endregion
 }

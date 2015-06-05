@@ -1,68 +1,105 @@
-﻿using UnityEngine;
+﻿/* --------------------------
+ *
+ * DamageableObject.cs
+ *
+ * Description: Abstract base class for any object that can take damage including health and armour tracking.
+ *
+ * Author: Jeremy Smellie
+ *
+ * Editors:
+ *
+ * 6/4/2015 - Starvoxel
+ *
+ * All rights reserved.
+ *
+ * -------------------------- */
+
+#region Includes
+#region Unity Includes
+using UnityEngine;
+#endregion
+
+#region System Includes
 using System.Collections;
+#endregion
 
-public abstract class DamageableObject : MonoBehaviour
+#region Other Includes
+
+#endregion
+#endregion
+
+namespace Starvoxel.ThatBoatGame
 {
-  [SerializeField]
-  protected float _maxHealth;
-  public virtual float maxHealth
-  {
-    get
+    public abstract class DamageableObject : MonoBehaviour
     {
-      return _maxHealth;
+        #region Fields & Properties
+        //const
+
+        //public
+
+        //protected
+
+        //private
+        [SerializeField] protected float m_MaxHealth;
+        [SerializeField] protected float m_StartingHealth;
+        [SerializeField] protected float m_Armour;
+
+        protected float m_Health;
+
+        //properties
+        public virtual float MaxHealth
+        {
+            get { return m_MaxHealth; }
+        }
+
+        public virtual float StartingHealth
+        {
+            get { return m_StartingHealth; }
+        }
+
+        public virtual float Health
+        {
+            get { return m_Health; }
+        }
+
+        public virtual float Armour
+        {
+            get { return m_Armour; }
+        }
+        #endregion
+
+        #region Unity Methods
+        protected virtual void Awake()
+        {
+            m_Health = m_StartingHealth;
+        }
+        #endregion
+
+        #region Public Methods
+        public virtual void DamageTaken(float damage)
+        {
+            damage = damage - Armour;
+
+            if (damage <= 0)
+            {
+                return;
+            }
+
+            m_Health -= damage;
+
+            if (m_Health <= 0)
+            {
+                Dead();
+            }
+        }
+
+        public abstract void Dead();
+        #endregion
+
+        #region Protected Methods
+        #endregion
+
+        #region Private Methods
+        #endregion
     }
-  }
-
-  [SerializeField]
-  protected float _startingHealth;
-  public virtual float startingHealth
-  {
-    get
-    {
-      return _startingHealth;
-    }
-  }
-
-  protected float _health;
-  public virtual float health
-  {
-    get
-    {
-      return _health;
-    }
-  }
-
-  [SerializeField]
-  protected float _armour;
-  public virtual float armour
-  {
-    get
-    {
-      return _armour;
-    }
-  }
-
-  protected virtual void Awake()
-  {
-    _health = _startingHealth;
-  }
-
-  public virtual void DamageTaken(float damage)
-  {
-    damage = damage - armour;
-
-    if (damage <= 0)
-    {
-      return;
-    }
-
-    _health -= damage;
-
-    if (_health <= 0)
-    {
-      Dead();
-    }
-  }
-
-  public abstract void Dead();
 }
