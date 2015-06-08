@@ -1,6 +1,6 @@
 /* --------------------------
  *
- * View.cs
+ * ModaleView.cs
  *
  * Description: 
  *
@@ -24,9 +24,9 @@ using System.Collections;
 #endregion
 #endregion
 
-namespace Starvoxel.ViewManagement
+namespace Starvoxel.FlowManagement
 {
-	public class View : MonoBehaviour 
+	public class ModaleView : View 
 	{
 		#region Fields & Properties
 		//const

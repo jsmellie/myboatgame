@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<FLOW>
+    <INFO version="1.0.0"/>
+    <VIEWS closeAllModal="true">
+        <GENERAL>
+            <PAUSE view="PAUSE"/>
+        </GENERAL>
+        <MAINMENU scene="MainMenu">
+            <GO_TO_INGAME view="MULTIPLAYER"/>
+            <GO_TO_SETTINGS view="SETTINGS"/>
+        </MAINMENU>
+        <SETTINGS scene="Settings" isModal="false" showOverlay="false">
+            <CLOSE/>
+        </SETTINGS>
+        <SETTINGS_MODAL scene="Settings" isModal="true" showOverlay="true">
+            <CLOSE/>
+        </SETTINGS_MODAL>
+        <MULTIPLAYER scene="InGame">
+            <GO_TO_MAINMENU/>
+        </MULTIPLAYER>
+        <PAUSE isModal="true" showOverlay="true">
+            <CLOSE/>
+            <GO_TO_SETTINGS view="SETTINGS_MODAL"/>
+            <GO_TO_MAINMENU view="MAINMENU"/>
+        </PAUSE>
+    </VIEWS>
+</FLOW>
