@@ -1,13 +1,41 @@
-using UnityEngine;
+$Header
+#region Includes
+#region System Includes
 using System.Collections;
-using System.Collections.Generic;
+#endregion
 
+#region Other Includes
+$Includes
+#endregion
+#endregion
+
+$NamespaceStart
 public class $ClassName {
-	
-	// The class constructor is called when the class instance is created
-	public $ClassName () {
+	#region Fields & Properties
+	//const
+
+	//public
+
+	//protected
+
+	//private
+
+	//properties
+	#endregion
+
+	#region Constructor Methods
+	public $ClassName()
+	{
 		
 	}
-	
-	$Functions
+	#endregion
+
+	#region Public Methods
+	#endregion
+
+	#region Protected Methods
+	#endregion
+
+	#region Private Methods
+	#endregion
 }
